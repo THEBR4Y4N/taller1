@@ -39,3 +39,15 @@ class Validador:
             return True
         else:
             return False
+
+    def validador_notacion(self, Ingreso):
+        regex4 = re.compile(Ingreso.getRegex4())
+        print(f"regex: {regex4}")
+        cadena4 = Ingreso.getEntrada4()
+        print(f"cadena: {cadena4}")
+        Ingreso.setEntrada4("")
+        resultado = regex4.match(cadena4)
+        if bool(resultado) == True:
+            return True
+        else:
+            return False  
