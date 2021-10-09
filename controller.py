@@ -1,53 +1,110 @@
-#Controller
+# Controller
 import re
-from tkinter import *
+
+
 class Validador:
-    
 
     def validador_nombres(self, Ingreso):
-        regex0 = re.compile(Ingreso.getRegex1())
-        print(f"regex: {regex0}")
-        cadena0 = (Ingreso.getEntrada1()) 
-        print(f"cadena: {cadena0}")
+        regex0 = re.compile(Ingreso.getRegexLetras())
+        cadena0 = (Ingreso.getEntrada1())
         Ingreso.setEntrada1("")
-        resultado = regex0.match(cadena0)
-        if bool(resultado) == True:
-            return True
-        else:
-            return False
-    
+        returns = ["", True]
+        for caracter in cadena0:
+            validar = regex0.match(caracter)
+            if validar == True:
+                returns[0] = ""
+                returns[1] = bool(validar)
+            else:
+                returns[1] = bool(validar)
+                returns[0] = caracter
+                if False == returns[1]:
+                    break
+        return returns
+
     def validador_numeros(self, Ingreso):
-        regex1 = re.compile(Ingreso.getRegex2())
-        print(f"regex: {regex1}")
+        regexOperadores = re.compile(Ingreso.getRegexOperadores())
+        regexDigitos = re.compile(Ingreso.getRegexDigitos())
         cadena1 = Ingreso.getEntrada2()
-        print(f"cadena: {cadena1}")
         Ingreso.setEntrada2("")
-        resultado = regex1.match(cadena1)
-        if bool(resultado) == True:
-            return True
+        returns = ["", True]
+        validarOperadores = bool(regexOperadores.match(cadena1[0]))
+        if bool(validarOperadores) == True:
+            returns[0] = ""
+            returns[1] = bool(validarOperadores)
+            for caracter in cadena1[1:]:
+                validarDigitos = bool(regexDigitos.match(caracter))
+                if (bool(validarOperadores) == True and returns[1] == False):
+                    returns[1] = bool(validarDigitos)
+                    returns[0] = ""
+                else:
+                    returns[1] = bool(validarDigitos)
+                    returns[0] = caracter
+                    if False == returns[1]:
+                        break
+            return returns
         else:
-            return False
-            
+            returns[1] = bool(validarOperadores)
+            returns[0] = cadena1[0]
+            return returns
+
     def validador_correos(self, Ingreso):
-        regex2 = re.compile(Ingreso.getRegex3())
-        print(f"regex: {regex2}")
+        regexLetras = re.compile(Ingreso.getRegexLetras())
+        regexDigitos = re.compile(Ingreso.getRegexDigitos())
         cadena2 = Ingreso.getEntrada3()
-        print(f"cadena: {cadena2}")
         Ingreso.setEntrada3("")
-        resultado = regex2.match(cadena2)
-        if bool(resultado) == True:
-            return True
-        else:
-            return False
+        returns = ["", True]
+        for caracteres in cadena2:
+            validar = bool(regexLetras.match(caracteres))
+            if (bool(validar) == True or bool(regexDigitos.match(caracteres)) == True and "@" in cadena2):
+                returns[0] = ""
+                returns[1] = True
+            elif (caracteres == "-" or caracteres == "_" or caracteres == "." and "@" in cadena2):
+                returns[0] = ""
+                returns[1] = True
+            elif (caracteres == "@"):
+                try:
+                    cadena_dividida = cadena2.split('@')
+                    validar = bool(regexLetras.match(cadena_dividida[1]))
+                    if (bool(validar) == True):
+                        returns[0] = ""
+                        returns[1] = True
+                except:
+                    returns[1] = False
+                    break
+            else:
+                returns[0] = "Error causado debido a que no es un correo electronico ya que no cuenta con un @ o debido al caracter: ", caracteres
+                returns[1] = False
+                break
+
+        return returns
 
     def validador_notacion(self, Ingreso):
-        regex4 = re.compile(Ingreso.getRegex4())
-        print(f"regex: {regex4}")
+        regexOperadores = re.compile(Ingreso.getRegexOperadores())
+        regexDigitos = re.compile(Ingreso.getRegexDigitos())
+        regexNotacion = re.compile(Ingreso.getRegexNotacion())
         cadena4 = Ingreso.getEntrada4()
-        print(f"cadena: {cadena4}")
         Ingreso.setEntrada4("")
-        resultado = regex4.match(cadena4)
-        if bool(resultado) == True:
-            return True
+        returns = ["", True]
+        validarOperadores = bool(regexOperadores.match(cadena4[0]))
+        print(validarOperadores)
+        if bool(validarOperadores) == True:
+            returns[0] = ""
+            returns[1] = bool(validarOperadores)
+            for caracter in cadena4[1:]:
+                validarDigitos = bool(regexDigitos.match(caracter))
+                if (bool(validarDigitos) == True and returns[1] == False):
+                    returns[1] = bool(validarDigitos)
+                    returns[0] = ""
+                elif ("e" in caracter or "E" in caracter):
+                    returns[1] = bool(validarDigitos)
+                    returns[0] = ""
+                else:
+                    returns[1] = bool(validarDigitos)
+                    returns[0] = caracter
+                    if False == returns[1]:
+                        break
+            return returns
         else:
-            return False  
+            returns[1] = bool(validarOperadores)
+            returns[0] = cadena4[0]
+            return returns
